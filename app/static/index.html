@@ -3,61 +3,119 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Calculateur de prix — Artisans malgaches</title>
+  <title>Calculateur de prix pour artisans</title>
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
-  <header>
-    <h1>Calculateur de prix pour artisans</h1>
-    <p class="subtitle">Matériaux + temps + marge = prix juste 🇲🇬</p>
+  <header class="site-header">
+    <div class="container">
+      <h1>Calculateur de prix</h1>
+      <p class="tagline">Un prix juste pour un travail juste.</p>
+    </div>
   </header>
 
-  <main>
-    <!-- Formulaire -->
-    <section class="card">
-      <h2>Nouveau calcul</h2>
-      <form id="form-calcul">
-        <label>
-          Nom du produit
-          <input type="text" id="nom_produit" required placeholder="Ex : Panier en raphia" />
-        </label>
+  <main class="container">
+    <section class="grid">
+      <!-- Formulaire -->
+      <article class="panel">
+        <h2>Nouveau calcul</h2>
 
-        <label>
-          Coût des matériaux (Ar)
-          <input type="number" id="cout_materiaux" min="0" step="100" required placeholder="5000" />
-        </label>
+        <form id="form-calcul" novalidate>
+          <div class="field">
+            <label for="nom_produit">Nom du produit</label>
+            <input id="nom_produit" name="nom_produit" type="text"
+                   required maxlength="120" placeholder="Ex : Panier en raphia" />
+          </div>
 
-        <label>
-          Temps de travail (heures)
-          <input type="number" id="temps_heures" min="0" step="0.5" required placeholder="3" />
-        </label>
+          <div class="field-row">
+            <div class="field">
+              <label for="metier">Métier</label>
+              <select id="metier" name="metier">
+                <option value="vannerie">Vannerie</option>
+                <option value="couture">Couture</option>
+                <option value="menuiserie">Menuiserie</option>
+                <option value="broderie">Broderie</option>
+                <option value="autre" selected>Autre</option>
+              </select>
+            </div>
 
-        <label>
-          Taux horaire (Ar/h)
-          <input type="number" id="taux_horaire" min="0" step="100" required placeholder="2000" />
-        </label>
+            <div class="field">
+              <label for="devise">Devise</label>
+              <select id="devise" name="devise">
+                <option value="MGA" selected>Ariary (Ar)</option>
+                <option value="EUR">Euro (€)</option>
+                <option value="USD">Dollar ($)</option>
+              </select>
+            </div>
+          </div>
 
-        <label>
-          Marge souhaitée (%)
-          <input type="number" id="marge" min="0" step="1" required placeholder="30" />
-        </label>
+          <div class="field-row">
+            <div class="field">
+              <label for="cout_materiaux">Coût des matériaux</label>
+              <input id="cout_materiaux" name="cout_materiaux" type="number"
+                     min="0" step="0.01" required placeholder="5000" />
+            </div>
+            <div class="field">
+              <label for="frais_divers">Frais divers</label>
+              <input id="frais_divers" name="frais_divers" type="number"
+                     min="0" step="0.01" value="0" placeholder="0" />
+            </div>
+          </div>
 
-        <button type="submit">Calculer et enregistrer</button>
-      </form>
+          <div class="field-row">
+            <div class="field">
+              <label for="temps_heures">Temps de travail (heures)</label>
+              <input id="temps_heures" name="temps_heures" type="number"
+                     min="0" step="0.25" required placeholder="3" />
+            </div>
+            <div class="field">
+              <label for="taux_horaire">Taux horaire</label>
+              <input id="taux_horaire" name="taux_horaire" type="number"
+                     min="0" step="0.01" required placeholder="2000" />
+            </div>
+          </div>
 
-      <div id="resultat" class="resultat hidden"></div>
-    </section>
+          <div class="field">
+            <label for="marge">Marge souhaitée (%)</label>
+            <input id="marge" name="marge" type="number"
+                   min="0" step="1" required placeholder="30" />
+            <div class="hint-row" id="marge-hints">
+              <button type="button" class="chip" data-marge="20">20 %</button>
+              <button type="button" class="chip" data-marge="30">30 %</button>
+              <button type="button" class="chip" data-marge="40">40 %</button>
+              <button type="button" class="chip" data-marge="50">50 %</button>
+            </div>
+          </div>
 
-    <!-- Historique -->
-    <section class="card">
-      <h2>Historique des calculs</h2>
-      <button id="btn-refresh" type="button">Rafraîchir</button>
-      <div id="historique">Chargement…</div>
+          <div class="actions">
+            <button type="submit" class="btn btn-primary">Calculer et enregistrer</button>
+            <button type="reset" class="btn btn-ghost">Réinitialiser</button>
+          </div>
+
+          <p id="form-error" class="error hidden"></p>
+        </form>
+
+        <div id="resultat" class="resultat hidden" aria-live="polite"></div>
+      </article>
+
+      <!-- Historique -->
+      <article class="panel">
+        <div class="panel-head">
+          <h2>Historique</h2>
+          <div class="panel-actions">
+            <button id="btn-refresh" type="button" class="btn btn-ghost">Rafraîchir</button>
+            <a href="/api/export.csv" class="btn btn-secondary" download>Exporter CSV</a>
+          </div>
+        </div>
+        <div id="historique" class="historique">Chargement…</div>
+      </article>
     </section>
   </main>
 
-  <footer>
-    <p>Petit outil local — FastAPI + SQLite + JS vanilla</p>
+  <footer class="site-footer">
+    <div class="container">
+      <p>Outil local — les données restent sur votre machine.</p>
+    </div>
   </footer>
 
   <script src="/static/app.js"></script>
