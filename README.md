@@ -1,27 +1,32 @@
+
+mon readme actuel n'est pas bon alors remplace par une version final et sans emojie
+Voici une version finale, propre, sans emojis, à copier-coller intégralement dans ton README.md.
+
+md
 # Calculateur de prix pour artisans malgaches
 
-Petit outil web pour aider les artisans malgaches (vannerie, couture, menuiserie, broderie…) à calculer un **prix de vente juste** en tenant compte :
+Petit outil web pour aider les artisans malgaches (vannerie, couture, menuiserie, broderie…) à calculer un prix de vente juste en tenant compte :
 
 - du coût des matières premières,
 - du temps de travail,
 - du taux horaire,
 - de la marge souhaitée.
 
-L’application calcule automatiquement le **prix de revient** et le **prix de vente conseillé**, puis conserve un historique des calculs.
+L'application calcule automatiquement le prix de revient et le prix de vente conseillé, puis conserve un historique des calculs.
 
 ---
 
-## 🧱 Stack technique
+## Stack technique
 
-- **Python 3.10+**
-- **FastAPI** — API web rapide et légère
-- **SQLite** — base de données locale, aucun serveur à installer
-- **HTML / CSS / JavaScript vanilla** — pas de framework frontend
-- **Uvicorn** — serveur ASGI pour lancer l’app
+- Python 3.10+
+- FastAPI : API web rapide et légère
+- SQLite : base de données locale, aucun serveur à installer
+- HTML / CSS / JavaScript vanilla : pas de framework frontend
+- Uvicorn : serveur ASGI pour lancer l'application
 
 ---
 
-## 📁 Structure du projet
+## Structure du projet
 calculateur-prix-artisans/
 ├── app/
 │ ├── init.py
@@ -40,7 +45,7 @@ text
 
 ---
 
-## ⚙️ Installation et lancement
+## Installation et lancement
 
 ### 1. Cloner le dépôt
 
@@ -66,16 +71,14 @@ pip install -r requirements.txt
 4. Lancer le serveur
 bash
 uvicorn app.main:app --reload
-5. Ouvrir l’application
-Dans ton navigateur :
+5. Ouvrir l'application
+Dans le navigateur :
 
-👉 http://127.0.0.1:8000
+Application : http://127.0.0.1:8000
 
-Documentation interactive de l’API :
+Documentation interactive de l'API : http://127.0.0.1:8000/docs
 
-👉 http://127.0.0.1:8000/docs
-
-🧮 Comment sont calculés les prix ?
+Comment sont calculés les prix ?
 Soit :
 
 M = coût des matériaux (Ar)
@@ -89,8 +92,8 @@ G = marge souhaitée (%)
 Formules :
 
 text
-Prix de revient   = M + (H × T)
-Prix de vente     = Prix de revient × (1 + G / 100)
+Prix de revient = M + (H × T)
+Prix de vente   = Prix de revient × (1 + G / 100)
 Exemple concret
 Champ	Valeur
 Nom du produit	Panier en raphia
@@ -102,15 +105,15 @@ Calcul :
 
 text
 Prix de revient = 5 000 + (3 × 2 000) = 11 000 Ar
-Prix de vente   = 11 000 × 1,30      = 14 300 Ar
-➡️ Prix conseillé : 14 300 Ar
+Prix de vente   = 11 000 × 1,30       = 14 300 Ar
+Prix conseillé : 14 300 Ar
 
-🔌 Endpoints de l’API
+Endpoints de l'API
 Méthode	URL	Description
-GET	/	Sert l’interface index.html
+GET	/	Sert l'interface index.html
 POST	/api/calcul	Reçoit les données, calcule, sauvegarde et retourne le résultat
 GET	/api/historique	Retourne la liste des calculs enregistrés
-Exemple d’appel POST /api/calcul
+Exemple d'appel POST /api/calcul
 bash
 curl -X POST http://127.0.0.1:8000/api/calcul \
   -H "Content-Type: application/json" \
@@ -134,7 +137,7 @@ json
   "prix_final": 14300.0,
   "date_creation": "2025-01-15T10:23:45"
 }
-🗄️ Base de données
+Base de données
 Fichier SQLite créé automatiquement au premier lancement : calculs.db (à la racine du projet).
 
 Table calculs :
@@ -148,3 +151,42 @@ taux_horaire	REAL	Taux horaire (Ar/h)
 marge	REAL	Marge appliquée (%)
 prix_final	REAL	Prix de vente conseillé (Ar)
 date_creation	TEXT	Date ISO de création
+Vérification du MVP
+Le serveur démarre avec uvicorn app.main:app --reload
+
+L'interface s'affiche sur http://127.0.0.1:8000
+
+On peut saisir un produit et obtenir un prix conseillé
+
+Le calcul est sauvegardé dans SQLite
+
+L'historique affiche les calculs enregistrés
+
+L'interface est responsive et en français
+
+Les endpoints sont visibles dans /docs
+
+Pistes d'amélioration future
+Export CSV ou PDF des devis pour les artisans
+
+Gestion de plusieurs devises (Ariary, Euro, Dollar)
+
+Profils de marge par métier (vannerie, couture, menuiserie…)
+
+Champ « frais divers » ou « main-d'œuvre indirecte »
+
+Arrondi automatique au millier d'Ariary le plus proche
+
+Licence
+Projet pédagogique : libre d'utilisation et de modification.
+
+text
+
+---
+
+Ensuite, tu peux commiter :
+
+```bash
+git add README.md
+git commit -m "docs: finalisation du README et exemples d'utilisation"
+git push origin main
