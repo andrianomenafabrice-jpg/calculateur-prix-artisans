@@ -1,8 +1,3 @@
-
-mon readme actuel n'est pas bon alors remplace par une version final et sans emojie
-Voici une version finale, propre, sans emojis, à copier-coller intégralement dans ton README.md.
-
-md
 # Calculateur de prix pour artisans malgaches
 
 Petit outil web pour aider les artisans malgaches (vannerie, couture, menuiserie, broderie…) à calculer un prix de vente juste en tenant compte :
