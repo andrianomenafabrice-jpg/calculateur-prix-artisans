@@ -112,6 +112,37 @@
     </section>
   </main>
 
+  <!-- Modale pour générer un devis PDF -->
+  <div id="modal-devis" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-titre">
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-content">
+      <h3 id="modal-titre">Générer un devis PDF</h3>
+      <p class="modal-sub">
+        Ces informations apparaissent sur le devis remis au client.
+        Elles restent sur votre machine (mémorisées dans le navigateur).
+      </p>
+
+      <div class="field">
+        <label for="devis-artisan">Nom de l'artisan / atelier</label>
+        <input id="devis-artisan" type="text" maxlength="120"
+               placeholder="Ex : Atelier Ravao - Antananarivo" />
+      </div>
+
+      <div class="field">
+        <label for="devis-client">Nom du client (optionnel)</label>
+        <input id="devis-client" type="text" maxlength="120"
+               placeholder="Ex : Mme Rakoto" />
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="btn-confirmer-devis">
+          Télécharger le PDF
+        </button>
+        <button type="button" class="btn btn-ghost" data-close-modal>Annuler</button>
+      </div>
+    </div>
+  </div>
+
   <footer class="site-footer">
     <div class="container">
       <p>Outil local — les données restent sur votre machine.</p>

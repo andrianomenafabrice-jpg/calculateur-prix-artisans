@@ -1,9 +1,4 @@
-const DEVISE_LABEL = {
-  MGA: "Ar",
-  EUR: "€",
-  USD: "$",
-};
-
+const DEVISE_LABEL = { MGA: "Ar", EUR: "€", USD: "$" };
 const METIER_LABEL = {
   vannerie: "Vannerie",
   couture: "Couture",
@@ -12,13 +7,16 @@ const METIER_LABEL = {
   autre: "Autre",
 };
 
+const LS_ARTISAN = "calculateur_artisan";
+const LS_CLIENT = "calculateur_client";
+
 function formaterMontant(valeur, devise) {
   const symbole = DEVISE_LABEL[devise] || "";
   const n = new Intl.NumberFormat("fr-FR", {
     minimumFractionDigits: 0,
     maximumFractionDigits: devise === "MGA" ? 0 : 2,
   }).format(valeur);
-  return devise === "MGA" ? `${n} ${symbole}` : `${n} ${symbole}`;
+  return `${n} ${symbole}`;
 }
 
 function formaterDate(iso) {
@@ -35,6 +33,15 @@ function formaterDate(iso) {
   }
 }
 
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // ---------- Formulaire ----------
 const form = document.getElementById("form-calcul");
 const errorBox = document.getElementById("form-error");
@@ -44,13 +51,11 @@ function afficherErreur(msg) {
   errorBox.textContent = msg;
   errorBox.classList.remove("hidden");
 }
-
 function masquerErreur() {
   errorBox.textContent = "";
   errorBox.classList.add("hidden");
 }
 
-// Chips pour la marge
 document.querySelectorAll("#marge-hints .chip").forEach((chip) => {
   chip.addEventListener("click", () => {
     document.getElementById("marge").value = chip.dataset.marge;
@@ -128,6 +133,11 @@ async function chargerHistorique() {
     }
 
     histBox.innerHTML = items.map(rendreItem).join("");
+
+    // Attacher les boutons de devis
+    histBox.querySelectorAll("[data-devis-id]").forEach((btn) => {
+      btn.addEventListener("click", () => ouvrirModalDevis(btn.dataset.devisId));
+    });
   } catch (err) {
     histBox.innerHTML = `<div class="empty">${escapeHtml(err.message)}</div>`;
   }
@@ -147,19 +157,67 @@ function rendreItem(it) {
         <span>marge ${it.marge} %</span>
       </div>
       <div class="date">${formaterDate(it.date_creation)}</div>
+      <div class="item-actions">
+        <button type="button" class="btn btn-secondary btn-small"
+                data-devis-id="${it.id}">
+          Devis PDF
+        </button>
+      </div>
     </div>
   `;
 }
 
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
 document.getElementById("btn-refresh").addEventListener("click", chargerHistorique);
 
+// ---------- Modale devis ----------
+const modal = document.getElementById("modal-devis");
+const inputArtisan = document.getElementById("devis-artisan");
+const inputClient = document.getElementById("devis-client");
+const btnConfirmer = document.getElementById("btn-confirmer-devis");
+
+let devisIdCourant = null;
+
+function ouvrirModalDevis(id) {
+  devisIdCourant = id;
+  inputArtisan.value = localStorage.getItem(LS_ARTISAN) || "";
+  inputClient.value = localStorage.getItem(LS_CLIENT) || "";
+  modal.classList.remove("hidden");
+  inputArtisan.focus();
+}
+
+function fermerModal() {
+  modal.classList.add("hidden");
+  devisIdCourant = null;
+}
+
+modal.querySelectorAll("[data-close-modal]").forEach((el) => {
+  el.addEventListener("click", fermerModal);
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+    fermerModal();
+  }
+});
+
+btnConfirmer.addEventListener("click", () => {
+  if (!devisIdCourant) return;
+
+  const artisan = inputArtisan.value.trim();
+  const client = inputClient.value.trim();
+
+  localStorage.setItem(LS_ARTISAN, artisan);
+  localStorage.setItem(LS_CLIENT, client);
+
+  const params = new URLSearchParams();
+  if (artisan) params.set("artisan", artisan);
+  if (client) params.set("client", client);
+
+  const url = `/api/devis/${devisIdCourant}.pdf?${params.toString()}`;
+  window.location.href = url;
+
+  fermerModal();
+});
+
+// ---------- Chargement initial ----------
 chargerHistorique();
